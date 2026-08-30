@@ -4,100 +4,92 @@
 
 void do_view(view *v)
 {
-    s.fp = fopen("file_name", "rb");
+    v->fp = fopen(v->file_name, "rb");
     char header[10];
-    if(s.fp == NULL)
+    if(v->fp == NULL)
     {
         printf("File not found\n");
+        return;
     }
 
-    fread(header, 1, 10, fp);
+    fread(header, 1, 10, v->fp);
 
-    if(header[0] == 'I' && 
+    if(!(header[0] == 'I' && 
         header[1] == 'D' &&
-        header[2] == '3')
+        header[2] == '3'))
         {
-            printf("ID3 found\n");
+            printf("ID3 not found\n");
         }
-    else{
-        printf("ID3 not found\n");
-    }
 
     char tag[5];
-    char flag[2];
+    char flag[3];
     int size;
     
     int i = 6;
     while(i > 0)
     {
         //read tag from file
-        fread(tag, 1, 4, s.fp);
+        fread(tag, 1, 4, v->fp);
         tag[4] = '\0';
         
         //read size from file
-        fread(&size, 1, 4, s.fp);
+        fread(&size, 1, 4, v->fp);
 
         //coverting big endian to little endian
-        char *ptr = (char *)&size;
-        for(int j = 0; j < 2; j++)
-        {
-            char temp = ptr[j];
-            ptr[j] = ptr[3-j];
-            ptr[3-j] = temp;
-        }
+        size = convert_endian(size);
 
-        char data[size + 1];
+        fread(flag, 1, 3, v->fp);
 
-        fread(flag, 1, 2, s.fp);
-        fread(data, 1, size, s.fp);
-        data[size] = '\0';
-
-        char *text = data + 1;
+        char data[size];
+        fread(data, 1, size-1, v->fp);
+        data[size-1] = '\0';
 
         if(strcmp(tag, "TIT2") == 0)
         {
-            printf("Title : %s\n",text);
+            printf("Title : %s\n",data);
             i--;
         }
         else if(strcmp(tag, "TYER") == 0)
         {
-            printf("Year : %s\n",text);
+            printf("Year : %s\n",data);
             i--;
         }
         else if(strcmp(tag, "TALB") == 0)
         {
-            printf("Album : %s\n",text);
+            printf("Album : %s\n",data);
             i--;
         }
         else if(strcmp(tag, "TPE1") == 0)
         {
-            printf("Artist : %s\n",text);
+            printf("Artist : %s\n",data);
             i--;
         }
         else if(strcmp(tag, "TCON") == 0)
         {
-            printf("Genre : %s\n",text);
+            printf("Genre : %s\n",data);
             i--;
         }
         else if(strcmp(tag, "COMM") == 0)
         {
-            printf("Comment : %s\n",text);
+            printf("Comment : %s\n",data);
             i--;
         }
 
     }
 
-    fclose(fp);
+    fclose(v->fp);
 }
 
-void read_and_validate_view_arg(view *v,char *argv[])
+int read_and_validate_view_arg(view *v,char *argv[])
 {
-    if(strstr(argv[2], .mp3) != NULL)
+    if(strstr(argv[2], ".mp3") != NULL)
     {
-        strcpy(v->filename, argv[2]);
+        strcpy(v->file_name, argv[2]);
     }
     else
     {
         printf("The given name is not a mp3 file\n");
+        return 0;
     }
+    return 1;
 }
