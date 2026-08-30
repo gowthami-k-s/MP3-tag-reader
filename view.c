@@ -6,9 +6,11 @@ void do_view(view *v)
 {
     v->fp = fopen(v->file_name, "rb");
     char header[10];
+
     if(v->fp == NULL)
     {
         printf("File not found\n");
+        fclose(v->fp);
         return;
     }
 
@@ -46,27 +48,27 @@ void do_view(view *v)
 
         if(strcmp(tag, "TIT2") == 0)
         {
-            printf("Title : %s\n",data);
+            printf("Title   : %s\n",data);
             i--;
         }
         else if(strcmp(tag, "TYER") == 0)
         {
-            printf("Year : %s\n",data);
+            printf("Year    : %s\n",data);
             i--;
         }
         else if(strcmp(tag, "TALB") == 0)
         {
-            printf("Album : %s\n",data);
+            printf("Album   : %s\n",data);
             i--;
         }
         else if(strcmp(tag, "TPE1") == 0)
         {
-            printf("Artist : %s\n",data);
+            printf("Artist  : %s\n",data);
             i--;
         }
         else if(strcmp(tag, "TCON") == 0)
         {
-            printf("Genre : %s\n",data);
+            printf("Genre   : %s\n",data);
             i--;
         }
         else if(strcmp(tag, "COMM") == 0)
