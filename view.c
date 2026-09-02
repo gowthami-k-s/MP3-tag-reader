@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #include "header.h"
 
 void do_view(view *v)
@@ -10,7 +11,6 @@ void do_view(view *v)
     if(v->fp == NULL)
     {
         printf("File not found\n");
-        fclose(v->fp);
         return;
     }
 
@@ -21,62 +21,83 @@ void do_view(view *v)
         header[2] == '3'))
         {
             printf("ID3 not found\n");
+            fclose(v->fp);
+            return;
         }
 
+
+    int tag_size = ((unsigned char)header[6] << 21) |
+                    ((unsigned char)header[7] << 14) |
+                    ((unsigned char)header[8] << 7) |
+                    (unsigned char)header[9];
+    
+    int read_byte = 0;
     char tag[5];
-    char flag[3];
+    char flag[2];
     int size;
     
-    int i = 6;
-    while(i > 0)
+    while(read_byte < tag_size)
     {
-        //read tag from file
-        fread(tag, 1, 4, v->fp);
-        tag[4] = '\0';
-        
-        //read size from file
-        fread(&size, 1, 4, v->fp);
+        if(fread(tag, 1, 4, v->fp) != 4)
+            break;
 
-        //coverting big endian to little endian
+        tag[4] = '\0';
+
+        // Padding reached
+        if(tag[0] == '\0')
+            break;
+
+        if(fread(&size, 1, 4, v->fp) != 4)
+            break;
+
         size = convert_endian(size);
 
-        fread(flag, 1, 3, v->fp);
+        if(size <= 0 || read_byte + 10 + size > tag_size)
+        {
+            printf("Invalid frame size\n");
+            break;
+        }
 
-        char data[size];
-        fread(data, 1, size-1, v->fp);
-        data[size-1] = '\0';
+        if(fread(flag, 1, 2, v->fp) != 2)
+            break;
+
+        char *data = malloc(size + 1);
+
+        if(data == NULL)
+        {
+            printf("Memory allocation failed\n");
+            break;
+        }
+
+        if(fread(data, 1, size, v->fp) != size)
+        {
+            free(data);
+            break;
+        }
+
+        data[size] = '\0';
+
+        read_byte += 10 + size;
 
         if(strcmp(tag, "TIT2") == 0)
-        {
-            printf("Title   : %s\n",data);
-            i--;
-        }
-        else if(strcmp(tag, "TYER") == 0)
-        {
-            printf("Year    : %s\n",data);
-            i--;
-        }
-        else if(strcmp(tag, "TALB") == 0)
-        {
-            printf("Album   : %s\n",data);
-            i--;
-        }
-        else if(strcmp(tag, "TPE1") == 0)
-        {
-            printf("Artist  : %s\n",data);
-            i--;
-        }
-        else if(strcmp(tag, "TCON") == 0)
-        {
-            printf("Genre   : %s\n",data);
-            i--;
-        }
-        else if(strcmp(tag, "COMM") == 0)
-        {
-            printf("Comment : %s\n",data);
-            i--;
-        }
+            printf("Title   : %s\n", data + 1);
 
+        else if(strcmp(tag, "TYER") == 0)
+            printf("Year    : %s\n", data + 1);
+
+        else if(strcmp(tag, "TALB") == 0)
+            printf("Album   : %s\n", data + 1);
+
+        else if(strcmp(tag, "TPE1") == 0)
+            printf("Artist  : %s\n", data + 1);
+
+        else if(strcmp(tag, "TCON") == 0)
+            printf("Genre   : %s\n", data + 1);
+
+        else if(strcmp(tag, "COMM") == 0)
+            printf("Comment : %s\n", data + 1);
+
+        free(data);
     }
 
     fclose(v->fp);
