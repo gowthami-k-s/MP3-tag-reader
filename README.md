@@ -1,4 +1,3 @@
-````markdown
 # MP3 Tag Reader & Editor
 
 ## Description
@@ -33,45 +32,32 @@ The project works with **ID3v2 metadata** and allows users to view and modify co
 ### View Operation
 
 The view operation reads the ID3 header and extracts the metadata frames from the MP3 file.
-
-```bash
 ./a.out -v sample.mp3
-````
 
 It displays information such as:
 
-```text
 Title   : Sample Song
 Artist  : Sample Artist
 Album   : Sample Album
 Year    : 2026
 Genre   : Rock
 Comment : Sample Comment
-```
 
 ### Edit Operation
 
 The edit operation allows the user to modify a particular tag.
-
-```bash
 ./a.out -e -t "New Title" sample.mp3
-```
 
 Other examples:
-
-```bash
 ./a.out -e -y "2026" sample.mp3
 ./a.out -e -a "New Artist" sample.mp3
 ./a.out -e -A "New Album" sample.mp3
 ./a.out -e -g "Rock" sample.mp3
 ./a.out -e -c "My Comment" sample.mp3
-```
 
 ### Help
 
-```bash
 ./a.out -h
-```
 
 ## Technologies Used
 
@@ -97,7 +83,6 @@ Other examples:
 
 ## Project Structure
 
-```text
 MP3-Tag-Reader/
 │
 ├── main.c
@@ -107,31 +92,17 @@ MP3-Tag-Reader/
 ├── menu.c
 ├── Makefile
 └── README.md
-```
-
-## Compilation
-
-Compile the project using GCC:
-
-```bash
-gcc *.c
-```
-
-Run the program:
-
-```bash
-./a.out -h
-```
 
 ## Learning Outcome
 
-This project helped in understanding **C file handling, binary data processing, structures, pointers, dynamic memory allocation, command-line arguments, and ID3 metadata handling**.
+-> C file handling
+-> Binary data processing
+-> Structures
+-> Pointers
+-> Dynamic memory allocation
+-> Command-line arguments
+-> ID3 metadata handling.
 
 ## Author
 
 **K S Gowthami**
-
-C Programming | Embedded Systems | Firmware Development
-
-```
-```
