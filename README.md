@@ -89,8 +89,7 @@ MP3-Tag-Reader
 * edit.c
 * header.h
 * menu.c
-* Makefile
-* README.md
+* MP3 File
 
 ## Learning Outcome
 
