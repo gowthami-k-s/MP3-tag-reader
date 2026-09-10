@@ -83,25 +83,24 @@ Other examples:
 
 ## Project Structure
 
-MP3-Tag-Reader/
-│
-├── main.c
-├── view.c
-├── edit.c
-├── header.h
-├── menu.c
-├── Makefile
-└── README.md
+MP3-Tag-Reader
+* main.c
+* view.c
+* edit.c
+* header.h
+* menu.c
+* Makefile
+* README.md
 
 ## Learning Outcome
 
--> C file handling
--> Binary data processing
--> Structures
--> Pointers
--> Dynamic memory allocation
--> Command-line arguments
--> ID3 metadata handling.
+-  C file handling
+-  Binary data processing
+-  Structures
+-  Pointers
+-  Dynamic memory allocation
+-  Command-line arguments
+-  ID3 metadata handling.
 
 ## Author
 
